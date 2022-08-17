@@ -12,13 +12,16 @@ Day = 15
 hour = {17}
 ###ここまでを変える、ここから先はいじらない
 
-surface = 'テニス（人工芝）'
-if (Park == '大井埠頭公園'):
-    surface = 'テニス（ハード）'
 
 import requests
 from bs4 import BeautifulSoup
 
+#コートの種類で場合分け
+surface = 'テニス（人工芝）'
+if (Park == '大井埠頭公園'):
+    surface = 'テニス（ハード）'
+
+#都営サイト上での識別番号の一覧
 PARK = '''\
 日比谷公園: 1000
 猿江恩賜公園: 1040
@@ -31,6 +34,7 @@ PARK = '''\
 大井埠頭公園: 1310\
 '''
 park = dict([tuple(line.split(': ')) for line in PARK.split('\n')])
+
 
 BODY = '''\
 layoutChildBody:childForm:itemindex: 0
@@ -72,7 +76,7 @@ def main(event,context):
 
     #LINEで通知
     url_base = "https://notify-api.line.me/api/notify"
-    access_token = 'KfiZu5lr3VPnLp6iL9DEa8LwCRGZ8VnU2zSybf8SVOj'
+    access_token = 'KfiZu5lr3VPnLp6iL9DEa8LwCRGZ8VnU2zSybf8SVOj' #ここに送信したいトークルームのトークンを入力
     headers_LINE = {'Authorization': 'Bearer ' + access_token}
     if (num == []):
         message = str(Month)+'月'+str(Day)+'日'+Park+'の予約でエラー'
