@@ -4,8 +4,9 @@ from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.chrome.options import Options
 import chromedriver_binary
 from time import sleep
+import pandas as pd
 
-#開始列と終了列
+#csvファイルの開始列と終了列
 sta=2
 fin=90
 
@@ -13,7 +14,8 @@ fin=90
 url = 'https://yoyaku.sports.metro.tokyo.lg.jp/user/view/user/rsvEmptyState.html'
 
 def lottery(Park, day, hour, userid, password, list):
-    #seleniumの設定    
+    #seleniumの設定
+    # スパム認識されないようにランダムにスリープを挟む  
     options = Options()
     options.add_argument('--headless') #ヘッダーレスにしない時はコメントアウト
     browser = webdriver.Chrome(options=options)
@@ -70,10 +72,8 @@ def lottery(Park, day, hour, userid, password, list):
         browser.find_element_by_id('goNextPager').click()
         sleep(0.6)
 
-import pandas as pd
-x=[]
 data = pd.read_csv('抽選04.csv',usecols=[1, 2, 6, 10, 11], dtype={'カード番号':'object', 'パスワード':'object', '時間帯':'object'})
-list=[]
+chusen_list=[]
 for i in range(sta-2, fin-1):
     num = data['カード番号'][i]
     pas = data['パスワード'][i]
@@ -106,10 +106,10 @@ for i in range(sta-2, fin-1):
     elif time == '19-21':
         time = int(19)
     day = int(data['日付'][i])
-    list.append([park, day, time, num, pas])
+    chusen_list.append([park, day, time, num, pas])
 
-for i in list:
+for place in chusen_list:
     try:
-        lottery(*i,i)
+        lottery(*place, place)
     except:
-        print(str(i)+'で抽選登録できませんでした。')
+        print(str(place)+'で抽選登録できませんでした。')
